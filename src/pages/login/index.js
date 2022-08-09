@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Dimensions, Image, Pressable, ImageBackground } from "react-native"
-
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const LoginScreen = ({ navigation }) => {
 
@@ -12,14 +11,24 @@ const LoginScreen = ({ navigation }) => {
                     style={[styles.image, { bottom: 200 }]}
 
                 >
-                    <Text style={{top:270, textAlign:'center', fontSize:20, color:'darkgreen', fontWeight:'bold'}}> PAMPACARE - LVC </Text>
+                    <Text style={{ top: 270, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontWeight: 'bold' }}> PAMPACARE - LVC </Text>
                 </ImageBackground>
             </View>
 
 
             <View style={styles.buttonContainer}>
                 <Pressable style={styles.button} onPress={() => { navigation.push('Form1') }}>
-                    <Text style={styles.textButton}>Registrar Caso</Text>
+                <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                        <Icon name='file' style={{right:'100%', color:'black', top:1}} />
+                        <Text style={styles.textButton}>Registrar Caso</Text>
+                    </View>
+                </Pressable>
+
+                <Pressable style={[styles.button, { marginTop: 20 }]} onPress={() => { navigation.push('Form1') }}>
+                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                        <Icon name='list' style={{right:'100%', color:'black', top:1}} />
+                        <Text style={styles.textButton}>Listar Caso</Text>
+                    </View>
                 </Pressable>
             </View>
 
