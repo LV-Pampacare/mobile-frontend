@@ -1,20 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { View, Text, StyleSheet, Dimensions, Pressable, ImageBackground } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
 import { TextInput } from 'react-native-paper'
-import { Endereco } from './data/Endereco'
+import { getCachorros } from "../Form2"
 
-let cachorros = 0;
 
-export const setCachorros = (num) => {
-    cachorros = num;
-}
-
-export const getCachorros = () => {
-    return cachorros;
-}
-
-const Form2 = ({ navigation }) => {
+const Form3 = ({ navigation }) => {
     const [rua, setRua] = useState('')
     const [numeroCasa, setNumeroCasa] = useState('')
     const [complemento, setComplemento] = useState('')
@@ -22,30 +13,21 @@ const Form2 = ({ navigation }) => {
     const [area, setArea] = useState('')
     const [latitude, setLatitude] = useState('')
     const [longitude, setLongitude] = useState('')
-    const [numeroDeCachorros, setNumeroDeCachorros] = useState('');
 
     const [field1, setField1] = useState(false);
     const [field2, setField2] = useState(false);
 
+    useEffect(() => {
+        console.log(getCachorros())
+    }, [])
 
-    const createAddress = () => {
-        const address = new Endereco(
-            rua,
-            complemento,
-            bairro,
-            area,
-            latitude,
-            longitude,
-        )
-        return address;
-    }
+
 
     const verify = () => {
         if (rua == '') {
             setField1(true)
         } else {
-            navigation.push('Form3')
-            setCachorros(Number(numeroDeCachorros));
+            navigation.push('Form4')
         }
     }
 
@@ -56,25 +38,16 @@ const Form2 = ({ navigation }) => {
         <ScrollView contentContainerStyle={styles.container}>
 
             <View style={{ flexDirection: 'column', top: 100 }}>
-                <ImageBackground source={require('../../../../assets/house.png')}
-                    style={[styles.image, { bottom: 200 }]}
-
-                >
-                    <Text style={{ top: 150, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontFamily:'QuickSandBold'}}> Endereço </Text>
+                <ImageBackground source={require('../../../../assets/dog.png')}
+                    style={[styles.image, { bottom: 200 }]}>
+                    <Text style={{ top: 150, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontFamily:'QuickSandBold' }}> Cachorro </Text>
                 </ImageBackground>
             </View>
 
 
 
             <View style={{ bottom: 30, alignItems: 'center' }}>
-                <TextInput label="Endereço" style={styles.textInput} activeUnderlineColor="green" value={rua} onChangeText={setRua} error={field1} />
-                <TextInput label="Complemento" style={styles.textInput} activeUnderlineColor="green" value={complemento} onChangeText={setComplemento} />
-                <TextInput label="Bairro" style={styles.textInput} activeUnderlineColor="green" value={bairro} onChangeText={setBairro} />
-                <TextInput label="Area" style={styles.textInput} activeUnderlineColor="green" value={area} onChangeText={setArea} />
-                <TextInput label="Latitude" style={styles.textInput} activeUnderlineColor="green" value={latitude} onChangeText={setLatitude} keyboardType='numeric' />
-                <TextInput label="Longitude" style={styles.textInput} activeUnderlineColor="green" value={longitude} onChangeText={setLongitude} keyboardType='numeric' />
-                <TextInput label="Número de Cachorros" style={styles.textInput} activeUnderlineColor="green" value={numeroDeCachorros} onChangeText={setNumeroDeCachorros} keyboardType='numeric' />
-
+                <TextInput label="Longitude" style={styles.textInput} activeUnderlineColor="green" value={longitude} onChangeText={setLongitude} />
             </View>
 
             <View style={[{ flexDirection: 'row', alignSelf: 'center', top: 40 }]}>
@@ -130,4 +103,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export { Form2 }
+export { Form3 }
