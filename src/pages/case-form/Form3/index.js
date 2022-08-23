@@ -1,64 +1,196 @@
 import { useEffect, useState } from "react"
-import { View, Text, StyleSheet, Dimensions, Pressable, ImageBackground } from "react-native"
+import { View, Text, StyleSheet, Dimensions, Pressable, ImageBackground, Keyboard, Alert } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
-import { TextInput } from 'react-native-paper'
-import { getCachorros } from "../Form2"
+import { TextInput, Switch, Checkbox } from 'react-native-paper'
+import { getCachorros, getEndereco } from "../Form2"
+import { ModalPopUp } from '../../../components/modal'
+import { api } from "../../../service/api"
+import { getProprietario } from "../Form1"
+import { Cachorro } from './data/Cachorro'
+let listaDosCachorros = []
+
+export const getListaCachorro = () => {
+    return listaDosCachorros
+}
+
+export const addCachorro = (dog) => {
+    console.log(dog)
+    listaDosCachorros.push(dog)
+}
 
 
 const Form3 = ({ navigation }) => {
-    const [rua, setRua] = useState('')
-    const [numeroCasa, setNumeroCasa] = useState('')
-    const [complemento, setComplemento] = useState('')
-    const [bairro, setBairro] = useState('')
-    const [area, setArea] = useState('')
-    const [latitude, setLatitude] = useState('')
-    const [longitude, setLongitude] = useState('')
+    const [dogName, setDogName] = useState('')
+    const [isAlive, setIsAlive] = useState(false)
+    const [lvc, setLvc] = useState(false)
+    const [sintomasCachorro, setSintomasCachorro] = useState([])
+    const [isVisible, setIsVisible] = useState(false)
+    const [exameVisible, setExameVisible] = useState(false);
+    const [dogIndex, setDogIndex] = useState(1);
 
-    const [field1, setField1] = useState(false);
-    const [field2, setField2] = useState(false);
+    const [exameResult, setExameResult] = useState('')
+    const [exameName, setExameName] = useState('')
+
+    const [sintomasList, setSintomasList] = useState([]);
 
     useEffect(() => {
-        console.log(getCachorros())
+        const fetch = () => {
+            api.get('/sintoma/listar').then(res => {
+                setSintomasList(res.data)
+            }).catch(err => {
+                fetch()
+            })
+        }
+
+        fetch()
     }, [])
 
 
-
     const verify = () => {
-        if (rua == '') {
-            setField1(true)
+        if (
+            dogIndex < getCachorros()
+        ) {
+
+            const exame = {
+                nome: exameName,
+                resultado: exameResult
+            }
+            const cachorro = new Cachorro(dogName, sintomasCachorro, isAlive, exame)
+            addCachorro(cachorro)
+            setDogIndex(dogIndex + 1)
+            setSintomasCachorro([])
+            setDogName('')
+            setIsAlive(false)
+            setLvc(false)
+            setExameName('')
+            setExameResult('')
         } else {
-            navigation.push('Form4')
+            Alert.alert('Informações salvas!')
+            navigation.navigate('Home')
         }
     }
 
+    const verifyBack = () => {
+        const options = [
+            { text: "Sair", onPress: () => { navigation.pop() } },
+            { text: "Voltar" }
+        ];
+
+        Alert.alert(
+            "ATENÇÃO",
+            "As informações serão perdidas caso você saia.",
+            options,
+        );
+    }
+
+    function sintomaFind(sintoma) {
+
+        if (sintomasCachorro.length > 0) {
+
+            if (sintomasCachorro.find(e => (e.id === sintoma.id))) {
+                return true;
+            } else {
+                return false
+            }
+        } else {
+            false
+        }
+    }
 
 
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
 
-            <View style={{ flexDirection: 'column', top: 100 }}>
+            <ModalPopUp visible={isVisible}>
+                <View style={{ alignSelf: 'center' }}>
+
+                    <Text onPress={() => { setIsVisible(false) }} style={{ textAlign: 'center', marginBottom: 20 }}> FECHAR</Text>
+
+                    <ScrollView>
+                        {sintomasList.map((sintoma, index) => {
+                            return (
+                                <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Checkbox
+                                        status={sintomaFind(sintoma) ? 'checked' : 'unchecked'}
+
+                                        onPress={() => {
+                                            var cac = sintomasCachorro;
+                                            cac.push(sintoma)
+                                            setSintomasCachorro(cac)
+                                        }}
+                                    />
+                                    <Text>{sintoma.nome}</Text>
+                                </View>
+                            )
+                        })}
+                    </ScrollView>
+                </View>
+
+            </ModalPopUp>
+
+
+            <ModalPopUp visible={exameVisible}>
+                <View style={{ alignSelf: 'center' }}>
+
+                    <Text onPress={() => { setExameVisible(false) }} style={{ textAlign: 'center', marginBottom: 20 }}> FECHAR</Text>
+
+                    <TextInput label="Nome do Exame" style={styles.textInput} activeUnderlineColor="green" value={exameName} onChangeText={setExameName} />
+                    <TextInput label="Resultado do Exame" style={styles.textInput} activeUnderlineColor="green" value={exameResult} onChangeText={setExameResult} />
+
+                </View>
+
+            </ModalPopUp>
+
+            <View style={{ flexDirection: 'column', top: 90 }}>
                 <ImageBackground source={require('../../../../assets/dog.png')}
-                    style={[styles.image, { bottom: 200 }]}>
-                    <Text style={{ top: 150, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontFamily:'QuickSandBold' }}> Cachorro </Text>
+                    style={[styles.image, { bottom: 250 }]}>
+                    <Text style={{ bottom: 20, textAlign: 'center', fontFamily: 'QuickSand' }}> {dogIndex} de {getCachorros()} </Text>
+                    <Text style={{ top: 120, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontFamily: 'QuickSandBold' }}> Cachorro </Text>
                 </ImageBackground>
             </View>
 
 
 
-            <View style={{ bottom: 30, alignItems: 'center' }}>
-                <TextInput label="Longitude" style={styles.textInput} activeUnderlineColor="green" value={longitude} onChangeText={setLongitude} />
+            <View style={{ bottom: 100, alignItems: 'center' }}>
+                <TextInput label="Nome do Cão" style={styles.textInput} activeUnderlineColor="green" value={dogName} onChangeText={setDogName} />
+
+                <TextInput label={'Sintomas'} style={styles.textInput} activeUnderlineColor="green" onFocus={() => { Keyboard.dismiss(); setIsVisible(true) }} />
+
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+                    <Text>Está vivo?</Text>
+                    <Switch value={isAlive} onValueChange={setIsAlive} />
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+                    <Text>LVC?</Text>
+                    <Switch value={lvc} onValueChange={setLvc} />
+                </View>
+
+                <Pressable onPress={() => {
+                    setExameVisible(true)
+                }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 30, border: 1, backgroundColor: 'lightgrey', padding: 10, borderRadius: 10 }}>
+                        <Text>Adicionar Exame</Text>
+                    </View></Pressable>
+
             </View>
 
             <View style={[{ flexDirection: 'row', alignSelf: 'center', top: 40 }]}>
-                <Pressable style={[styles.button, { marginRight: 100, alignSelf: 'flex-end' }]} onPress={() => { navigation.pop() }}>
+                <Pressable style={[styles.button, { marginRight: 100, alignSelf: 'flex-end' }]} onPress={() => { verifyBack() }}>
                     <Text style={styles.textButton}> {'<'} </Text>
                 </Pressable>
 
                 <Pressable style={styles.button} onPress={() => { verify() }}>
                     <Text style={styles.textButton}> {'>'} </Text>
                 </Pressable>
+
+
             </View>
+
+
+
 
 
         </ScrollView>

@@ -2,6 +2,7 @@ import { useState } from "react"
 import { View, Text, StyleSheet, Dimensions, Pressable, ImageBackground } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
 import { TextInput } from 'react-native-paper'
+import { getProprietario } from "../Form1"
 import { Endereco } from './data/Endereco'
 
 let cachorros = 0;
@@ -12,6 +13,16 @@ export const setCachorros = (num) => {
 
 export const getCachorros = () => {
     return cachorros;
+}
+
+let endereco
+
+export const setEndereco = (end) => {
+    endereco = end
+}
+
+export const getEndereco = () => {
+    return endereco
 }
 
 const Form2 = ({ navigation }) => {
@@ -44,8 +55,9 @@ const Form2 = ({ navigation }) => {
         if (rua == '') {
             setField1(true)
         } else {
-            navigation.push('Form3')
+            setEndereco(createAddress())
             setCachorros(Number(numeroDeCachorros));
+            navigation.push('Form3')
         }
     }
 
@@ -60,7 +72,7 @@ const Form2 = ({ navigation }) => {
                     style={[styles.image, { bottom: 200 }]}
 
                 >
-                    <Text style={{ top: 150, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontFamily:'QuickSandBold'}}> Endereço </Text>
+                    <Text style={{ top: 150, textAlign: 'center', fontSize: 20, color: 'darkgreen', fontFamily: 'QuickSandBold' }}> Endereço </Text>
                 </ImageBackground>
             </View>
 

@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Dimensions, Image, Pressable, ImageBackground } from "react-native"
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { getListaCachorro } from "../case-form/Form3";
 
 
 
 const HomeScreen = ({ navigation }) => {
-
 
     return (
         <View style={styles.container}>
@@ -27,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
                     </View>
                 </Pressable>
 
-                <Pressable style={[styles.button, { marginTop: 20 }]} onPress={() => { navigation.push('Form1') }}>
+                <Pressable style={[styles.button, { marginTop: 20 }]} onPress={() => { navigation.push('List') }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Icon name='list' style={{ right: '100%', color: 'black', top: 1 }} />
                         <Text style={styles.textButton}>Listar Caso</Text>
